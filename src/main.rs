@@ -28,6 +28,20 @@ fn handle_addition(settings: &Settings, history: &mut History) {
 }
 
 fn handle_search(settings: &Settings, history: &History) {
+    if settings.print {
+        history.build_cache_table(
+            &settings.dir,
+            &Some(settings.session_id.to_owned()),
+            None,
+            None,
+            None,
+        );
+        let result = history.find_matches(&settings.command, 200);
+        for cmd in result {
+            println!("{}", cmd.cmd);
+        }
+        return;
+    }
     let result = Interface::new(settings, history).display();
     if let Some(cmd) = result.selection {
         fake_typer::use_tiocsti(&cmd);

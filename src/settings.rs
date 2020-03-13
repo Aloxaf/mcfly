@@ -36,6 +36,7 @@ pub struct Settings {
     pub append_to_histfile: bool,
     pub refresh_training_cache: bool,
     pub lightmode: bool,
+    pub print: bool,
     pub key_scheme: KeyScheme
 }
 
@@ -54,6 +55,7 @@ impl Default for Settings {
             append_to_histfile: false,
             debug: false,
             lightmode: false,
+            print: false,
             key_scheme: KeyScheme::Emacs
         }
     }
@@ -125,6 +127,9 @@ impl Settings {
                     .value_name("PATH")
                     .help("Directory where command was run")
                     .takes_value(true))
+                .arg(Arg::with_name("print")
+                    .long("print")
+                    .help("Just print the result to stdout"))
                 .arg(Arg::with_name("command")
                     .help("The command search term(s)")
                     .value_name("COMMAND")
@@ -239,6 +244,7 @@ impl Settings {
                         .to_string();
                     bash_history::delete_last_history_entry_if_search(&settings.mcfly_history);
                 }
+                settings.print = search_matches.is_present("print");
             }
 
             ("train", Some(train_matches)) => {
